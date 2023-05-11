@@ -47,7 +47,7 @@ def scrape_instagram_profiles(location):
 def create_message(prompt, profile_id):
     model_engine = "text-curie-001"
     message_prompt = f"create an Instagram message for a new vape product 'HQQ' to {profile_id}"
-    openai.api_key = "YOUR_OPENAIAPI_KEY"
+    openai.api_key = "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"
     response = openai.Completion.create(
         engine=model_engine,
         prompt=message_prompt,
@@ -70,7 +70,7 @@ def send_instagram_message(profile_id, message):
 
     # Login to Instagram account and send message
     bot = Bot()
-    bot.login(username="USER_NAME", password="PASSWORD")
+    bot.login(username="nepadevelopment", password="Password!123")
     bot.send_message(message, [profile_id])
     time.sleep(random.randint(1, 10))
     bot.logout()
