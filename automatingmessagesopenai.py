@@ -71,9 +71,13 @@ def send_instagram_message(profile_id, message):
     # Login to Instagram account and send message
     bot = Bot()
     bot.login(username="nepadevelopment", password="Password!123")
-    bot.send_message(message, [profile_id])
-    time.sleep(random.randint(1, 10))
-    bot.logout()
+    try:
+        bot.send_message(message, [profile_id])
+        time.sleep(random.randint(1, 10))
+    except Exception as e:
+        st.write(f"Error sending message to {profile_id}: {e}")
+    finally:
+        bot.logout()
 
 
 # Main Streamlit application function
