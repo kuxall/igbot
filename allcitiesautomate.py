@@ -11,36 +11,40 @@ import openai
 import csv
 
 # Function to scrape Instagram profiles
-def scrape_instagram_profiles(location):
-    # Create search query for Google search
-    keyword_search_location = f"instagram smoke shop {location}"
-    url = f"https://www.google.com/search?q={keyword_search_location}"
-
-    # Set user agent header to avoid being blocked by Google
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
-    }
-
-    # Send request to Google and extract profiles from search results
-    res = requests.get(url, headers=headers)
-    soup = BeautifulSoup(res.text, "html.parser")
-    results = soup.select(".tF2Cxc")
-
+def scrape_instagram_profiles(location, num_pages=5):
     profiles = []
-    for result in results:
-        # Extract profile information from search result
-        title = result.select_one(".DKV0Md").text
-        link = result.a["href"]
-        if link.startswith("https://www.instagram.com/") and "/p/" not in link and "/explore/" not in link:
-            profile_link = link.split("?")[0]  # Remove any query parameters from the link
-            profile_id = profile_link.split("/")[-2]  # Extract the Instagram ID from the link
-            profiles.append({
-                "Title": title,
-                "Profile Link": profile_link,
-                "Profile ID": profile_id
-            })
     
+    for page in range(num_pages):
+        # Create search query for Google search
+        keyword_search_location = f"instagram smoke shop {location}"
+        start = page * 10
+        url = f"https://www.google.com/search?q={keyword_search_location}&start={start}"
+
+        # Set user agent header to avoid being blocked by Google
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+        }
+
+        # Send request to Google and extract profiles from search results
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+        results = soup.select(".tF2Cxc")
+
+        for result in results:
+            # Extract profile information from search result
+            title = result.select_one(".DKV0Md").text
+            link = result.a["href"]
+            if link.startswith("https://www.instagram.com/") and "/p/" not in link and "/explore/" not in link:
+                profile_link = link.split("?")[0]  # Remove any query parameters from the link
+                profile_id = profile_link.split("/")[-2]  # Extract the Instagram ID from the link
+                profiles.append({
+                    "Title": title,
+                    "Profile Link": profile_link,
+                    "Profile ID": profile_id
+                })
+
     return profiles
+
 
 
 # Function to generate messages using OpenAI API
