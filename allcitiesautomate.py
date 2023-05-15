@@ -9,7 +9,9 @@ import glob
 import random
 import openai
 import csv
-
+from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
 # Function to scrape Instagram profiles
 def scrape_instagram_profiles(location, num_pages=5):
     profiles = []
@@ -50,8 +52,8 @@ def scrape_instagram_profiles(location, num_pages=5):
 # Function to generate messages using OpenAI API
 def create_message(prompt, profile_id):
     model_engine = "text-curie-001"
+    openai.api_key = os.environ['OPENAI_API_KEY']  # Access the environment variable
     message_prompt = f"create an Instagram message for a new vape product 'HQQ' to {profile_id}"
-    openai.api_key = "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"
     response = openai.Completion.create(
         engine=model_engine,
         prompt=message_prompt,
