@@ -447,7 +447,7 @@ class Bot(object):
         if "is_threaded" in args:
             if args["is_threaded"]:
                 return True
-#         signal.signal(signal.SIGTERM, self.print_counters)
+        #         signal.signal(signal.SIGTERM, self.print_counters)
         return True
 
     def prepare(self):
@@ -677,7 +677,6 @@ class Bot(object):
         entity_page_name=None,
         entity_page_id=None,
     ):
-
         return like(
             self,
             media_id,
@@ -707,7 +706,6 @@ class Bot(object):
         entity_page_name=None,
         entity_page_id=None,
     ):
-
         return like_medias(
             self,
             media_ids,
@@ -785,7 +783,15 @@ class Bot(object):
         return download_photos(self, medias, folder, save_description)
 
     def upload_photo(
-        self, photo, caption=None, upload_id=None, from_video=False, options={}, user_tags=None, is_sidecar=False):
+        self,
+        photo,
+        caption=None,
+        upload_id=None,
+        from_video=False,
+        options={},
+        user_tags=None,
+        is_sidecar=False,
+    ):
         """Upload photo to Instagram
         @param photo        Path to photo file (String)
         @param caption      Media description (String)
@@ -807,10 +813,18 @@ class Bot(object):
         @return             Object with state of uploading to
                             Instagram (or False)
         """
-        return upload_photo(self, photo, caption, upload_id, from_video, options, user_tags, is_sidecar)
+        return upload_photo(
+            self, photo, caption, upload_id, from_video, options, user_tags, is_sidecar
+        )
 
     def upload_album(
-        self, photos, caption=None, upload_id=None, from_video=False, options={}, user_tags=None
+        self,
+        photos,
+        caption=None,
+        upload_id=None,
+        from_video=False,
+        options={},
+        user_tags=None,
     ):
         """Upload album to Instagram
         @param photos       List of paths to photo files (List of strings)
@@ -829,7 +843,9 @@ class Bot(object):
         @return             Object with state of uploading to
                             Instagram (or False)
         """
-        return upload_album(self, photos, caption, upload_id, from_video, options, user_tags)
+        return upload_album(
+            self, photos, caption, upload_id, from_video, options, user_tags
+        )
 
     # video
     def upload_video(self, video, caption="", thumbnail=None, options={}):
