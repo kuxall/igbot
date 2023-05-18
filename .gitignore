@@ -122,3 +122,4 @@ state/
 *qiskit*
 .history
 .venv
+scripts
