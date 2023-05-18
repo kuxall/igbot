@@ -26,9 +26,9 @@ Running the Streamlit Application: The `if __name__ == '__main__':` block ensure
 
 ### What's Happening?
 #### Issues
-- The same code on `app.py` was working fine(below is the picture)
-('![Working Images](https://github.com/sherpa-codes/igbot/blob/main/images/instagram.png?raw=true)
-')
-- But now 
-('![Issue Images](https://github.com/sherpa-codes/igbot/blob/main/images/issues.png?raw=true)
-')
+- The same code on `app.py` was working fine(below is the picture):
+![Working Images](https://github.com/sherpa-codes/igbot/blob/main/images/instagram.png?raw=true)
+
+
+- But now having this issues:
+![Issue Images](https://github.com/sherpa-codes/igbot/blob/main/images/issues.png?raw=true)
