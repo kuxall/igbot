@@ -1,4 +1,3 @@
-# Import necessary libraries
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
@@ -10,49 +9,42 @@ import random
 import openai
 import csv
 from dotenv import load_dotenv
+from typing import Iterator
+
 # Load environment variables from .env file
 load_dotenv()
 
-
 # Function to scrape Instagram profiles
-def scrape_instagram_profiles(location, num_pages=5):
-    profiles = []
-    
+def get_insta_accounts(location: str, num_pages: int = 5) -> Iterator[dict]:
+    search_query = f'instagram smoke shop {location}'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+    }
+
     for page in range(num_pages):
-        # Create search query for Google search
-        keyword_search_location = f"instagram smoke shop {location}"
         start = page * 10
-        url = f"https://www.google.com/search?q={keyword_search_location}&start={start}"
+        url = f'https://www.google.com/search?q={search_query}&start={start}'
 
-        # Set user agent header to avoid being blocked by Google
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
-        }
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        search_results = soup.find_all('div', {'class': 'g'})
 
-        # Send request to Google and extract profiles from search results
-        res = requests.get(url, headers=headers)
-        soup = BeautifulSoup(res.text, "html.parser")
-        results = soup.select(".tF2Cxc")
-
-        for result in results:
-            # Extract profile information from search result
-            title = result.select_one(".DKV0Md").text
-            link = result.a["href"]
-            if link.startswith("https://www.instagram.com/") and "/p/" not in link and "/explore/" not in link:
-                profile_link = link.split("?")[0]  # Remove any query parameters from the link
-                profile_id = profile_link.split("/")[-2]  # Extract the Instagram ID from the link
-                profiles.append({
-                    "Title": title,
-                    "Profile Link": profile_link,
-                    "Profile ID": profile_id
-                })
-    return profiles
+        for result in search_results:
+            if 'instagram.com' in result.find('a')['href']:
+                profile_link = result.find('a')['href']
+                profile_title = result.find('h3').text
+                profile_id = profile_link.split('/')[3]
+                yield {
+                    'Title': profile_title,
+                    'Profile Link': profile_link,
+                    'Profile ID': profile_id
+                }
 
 # Function to generate messages using OpenAI API
 def create_message(prompt, profile_id):
     model_engine = "text-curie-001"
     openai.api_key = os.environ['OPENAI_API_KEY']  # Access the environment variable
-    message_prompt = f"create an Instagram message for a new vape product 'HQQ' to {profile_id}"
+    message_prompt = f"create an Instagram message for a new vape product 'HVQ' to {profile_id}"
     response = openai.Completion.create(
         engine=model_engine,
         prompt=message_prompt,
@@ -89,12 +81,12 @@ def app():
     # Create a list of Instagram accounts
     accounts = [
         {
-            "username": "liquorden07",
-            "password": "liquorden321!"
+            "username": os.getenv("INSTAGRAM_USERNAME_1"),
+            "password": os.getenv("INSTAGRAM_PASSWORD_1")
         },
         {
-            "username": "nepadevelopment",
-            "password": "Password!123"
+            "username": os.getenv("INSTAGRAM_USERNAME_2"),
+            "password": os.getenv("INSTAGRAM_PASSWORD_2")
         },
         # Add more accounts if needed
     ]
@@ -103,7 +95,7 @@ def app():
     for city in cities:
         # Scrape Instagram profiles for the selected city
         st.write(f"Collecting Instagram profiles for {city}...")
-        profiles = scrape_instagram_profiles(city)
+        profiles = list(get_insta_accounts(city))
         st.subheader(f"Found {len(profiles)} profiles!")
 
         if len(profiles) > 0:
@@ -118,7 +110,7 @@ def app():
             st.write("Generating messages...")
             messages = []
             for profile in profiles:
-                generated_message = create_message("create an Instagram message for a new vape product 'HQQ'", profile["Profile ID"])
+                generated_message = create_message("create an Instagram message for a new vape product 'HVQ'", profile["Profile ID"])
                 messages.append(generated_message)
                 st.write(f"Generated message for {profile['Profile ID']}: {generated_message}")
 
