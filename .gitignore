@@ -111,7 +111,6 @@ nohup.out
 
 # VS Code
 .vscode
-state/
 
 # Settings files
 *.txt
