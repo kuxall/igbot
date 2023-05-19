@@ -43,3 +43,9 @@ The `if __name__ == '__main__':` block ensures that the `app()` function is only
 - But now having this issues:
 
 ![Issue Images](https://github.com/sherpa-codes/igbot/blob/main/images/issues.png?raw=true)
+
+
+#### Run the applications:
+``` 
+streamlit run app.py
+```
