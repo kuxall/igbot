@@ -119,6 +119,10 @@ nohup.out
 
 # Qiskit junkies
 *qiskit*
+
+# Local python files 
 .history
 .venv
 scripts
+ig
+.gitignore
