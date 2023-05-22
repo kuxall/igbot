@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from urllib.parse import urlparse, parse_qs
+import time
 
 
 # Function to scrape Instagram profiles
@@ -64,8 +65,11 @@ def get_insta_accounts(location, num_pages=10):
 def scrape_profiles_for_city(city):
     profiles = get_insta_accounts(city, num_pages=5)
 
-    # Save the profiles to a CSV file
-    output_file = f"./profiles/{city}_profiles.csv"
+    # Generate timestamp for the filename
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+
+    # Save the profiles to a CSV file with the timestamp in the filename
+    output_file = f"./profiles/{city}_profiles_{timestamp}.csv"
     with open(output_file, mode="w", newline="") as csvfile:
         writer = csv.DictWriter(
             csvfile, fieldnames=["Title", "Profile Link", "Profile ID"]
