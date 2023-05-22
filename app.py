@@ -16,25 +16,59 @@ from urllib.parse import urlparse, parse_qs
 load_dotenv()
 
 # Function to scrape Instagram profiles
-def get_insta_accounts(location, num_pages=5):
+def get_insta_accounts(location, num_pages=10):
     profiles = []
 
-    # Generate timestamp for the filename
-    timestamp = time.strftime("%Y%m%d%H%M%S")
+    for page in range(num_pages):
+        # Create search query for Google search
+        keyword_search_location = f"instagram smoke shop {location}"
+        start = page * 10
+        url = f"https://www.google.com/search?q={keyword_search_location}&start={start}"
 
-    # Generate filename based on the city name and timestamp
-    output_file = f"./profiles/{location}_profiles_{timestamp}.csv"
+        # Set user agent header to avoid being blocked by Google
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+        }
 
-    # Rest of the code...
+        # Send request to Google and extract profiles from search results
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+        div_elements = soup.select("div.egMi0.kCrYT")
 
-    # Write profiles to CSV file
-    keys = profiles[0].keys()  # Get the keys from the first profile dictionary
-    with open(output_file, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(profiles)
+        for div in div_elements:
+            # Extract the profile link from the href attribute
+            href = div.find("a")["href"]
+            parsed_url = urlparse(href)
+            query_params = parse_qs(parsed_url.query)
+            profile_link = query_params.get("url", [""])[0]
+
+            # Check if the profile link belongs to Instagram
+            if (
+                profile_link.startswith("https://www.instagram.com/")
+                and "/p/" not in profile_link
+                and "/explore/" not in profile_link
+                and "?utm_medium=copy_link" not in profile_link
+                and "?hl=ne" not in profile_link
+            ):
+                # Extract the profile ID from the link
+                profile_id = profile_link.strip("/").split("/")[-1]
+
+                # Extract the title from the h3 element
+                title = div.select_one(
+                    "div.DnJfK div.j039Wc h3 div.BNeawe.vvjwJb.AP7Wnd"
+                ).text
+
+                # Append the profile information to the list
+                profiles.append(
+                    {
+                        "Title": title,
+                        "Profile Link": profile_link,
+                        "Profile ID": profile_id,
+                    }
+                )
 
     return profiles
+
 
 # Function to generate messages using OpenAI API
 def create_message(prompt, profile_id):
