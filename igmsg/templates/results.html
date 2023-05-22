@@ -1,0 +1,15 @@
+{% if profiles %}
+    <h2>Scraped Profiles:</h2>
+    <ul>
+        {% for profile in profiles %}
+            <li>
+                <strong>Title:</strong> {{ profile.Title }}<br>
+                <strong>Profile Link:</strong> {{ profile.Profile_Link }}<br>
+                <strong>Profile ID:</strong> {{ profile.Profile_ID }}<br>
+                <strong>Message:</strong> {{ messages[forloop.counter0] }}<br> 
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No profiles found.</p>
+{% endif %}

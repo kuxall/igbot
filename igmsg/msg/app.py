@@ -8,15 +8,12 @@ import glob
 import random
 import openai
 import csv
-from dotenv import load_dotenv
 from typing import Iterator
 from urllib.parse import urlparse, parse_qs
 
-# Load environment variables from .env file
-load_dotenv()
 
 # Function to scrape Instagram profiles
-def get_insta_accounts(location, num_pages=5, output_file='./profiles/profiles.csv'):
+def get_insta_accounts(location, num_pages=5, output_file='profiles'):
     profiles = []
 
     for page in range(num_pages):
@@ -61,8 +58,8 @@ def get_insta_accounts(location, num_pages=5, output_file='./profiles/profiles.c
                 # Append the profile information to the list
                 profiles.append({
                     "Title": title,
-                    "Profile Link": profile_link,
-                    "Profile ID": profile_id
+                    "Profile_Link": profile_link,
+                    "Profile_ID": profile_id
                 })
     # Write profiles to CSV file
     keys = profiles[0].keys()  # Get the keys from the first profile dictionary
@@ -75,7 +72,7 @@ def get_insta_accounts(location, num_pages=5, output_file='./profiles/profiles.c
 # Function to generate messages using OpenAI API
 def create_message(prompt, profile_id):
     model_engine = "text-curie-001"
-    openai.api_key = os.environ['OPENAI_API_KEY']  # Access the environment variable
+    openai.api_key = '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'  # Access the environment variable
     message_prompt = f"create an Instagram message for a new vape product 'HVQ' to {profile_id}"
     response = openai.Completion.create(
         engine=model_engine,
@@ -113,12 +110,12 @@ def app():
     # Create a list of Instagram accounts
     accounts = [
         {
-            "username": os.getenv("INSTAGRAM_USERNAME_3"),
-            "password": os.getenv("INSTAGRAM_PASSWORD_3")
+            "username": "nepadevelopment",
+            "password": "Password!123"
         },
         {
-            "username": os.getenv("INSTAGRAM_USERNAME_4"),
-            "password": os.getenv("INSTAGRAM_PASSWORD_4")
+            "username": "ash.gtm07",
+            "password": "Secretkey@123"
         },
         # Add more accounts if needed
     ]
@@ -134,17 +131,17 @@ def app():
             st.write("Scraped profiles:")
             for profile in profiles:
                 st.write(f"Title: {profile['Title']}")
-                st.write(f"Profile Link: {profile['Profile Link']}")
-                st.write(f"Profile ID: {profile['Profile ID']}")
+                st.write(f"Profile Link: {profile['Profile_Link']}")
+                st.write(f"Profile ID: {profile['Profile_ID']}")
                 st.write("---")
 
             # Generate messages for each profile using OpenAI API
             st.write("Generating messages...")
             messages = []
             for profile in profiles:
-                generated_message = create_message("create an Instagram message for a new vape product 'HVQ'", profile["Profile ID"])
+                generated_message = create_message("create an Instagram message for a new vape product 'HVQ'", profile["Profile_ID"])
                 messages.append(generated_message)
-                st.write(f"Generated message for {profile['Profile ID']}: {generated_message}")
+                st.write(f"Generated message for {profile['Profile_ID']}: {generated_message}")
 
             # Send messages to each profile using different accounts
             st.write("Sending messages...")
@@ -154,9 +151,9 @@ def app():
                 account = accounts[account_index]
                 bot = Bot()
                 bot.login(username=account["username"], password=account["password"])
-                send_instagram_message(profile["Profile ID"], messages[i], bot)
+                send_instagram_message(profile["Profile_ID"], messages[i], bot)
                 bot.logout()
-                st.write(f"Sent message to {profile['Profile ID']} using {account['username']}: {messages[i]}")
+                st.write(f"Sent message to {profile['Profile_ID']} using {account['username']}: {messages[i]}")
             st.write("Messages sent!")
 
 if __name__ == '__main__':

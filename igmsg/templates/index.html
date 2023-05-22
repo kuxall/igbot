@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrape Instagram Profiles and Send Messages</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, rgba(131, 58, 180, 0.8), rgba(253, 29, 29, 0.8), rgba(252, 176, 69, 0.8));
+
+        }
+
+        .profile-list {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .profile-list li {
+            margin-bottom: 20px;
+        }
+
+        .profile-list li strong {
+            font-weight: bold;
+        }
+
+        .profile-list li a {
+            color: #0000FF;
+            text-decoration: none;
+        }
+
+        .message-list {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .message-list li {
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .messages {
+            margin-top: 20px;
+        }
+
+        .messages h2 {
+            margin-bottom: 10px;
+        }
+
+        .messages ul {
+            background-color: #fff;
+            padding: 10px;
+        }
+
+        .no-messages {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scrape Instagram Profiles and Send Messages</h1>
+
+    <form method="POST" action="{% url 'scrape_instagram_profiles' %}">
+        {% csrf_token %}
+        <label for="city">Select a city:</label>
+        <select name="city" id="city">
+            {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Scrape Profiles</button>
+    </form>
+
+    {% if profiles %}
+        <h2>Scraped Profiles:</h2>
+        <ul>
+            {% for profile in profiles %}
+                <li>
+                    <strong>Title:</strong> {{ profile.Title }}<br>
+                    <strong>Profile Link:</strong>
+                    <a href="{{ profile.Profile_Link }}" target="_blank">{{ profile.Profile_Link }}</a><br>
+                    <strong>Profile ID:</strong> {{ profile.Profile_ID }}<br>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if messages %}
+            <div class="messages">
+                <h2>Sent Messages:</h2>
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p class="no-messages">No messages sent.</p>
+        {% endif %}
+
+        <form method="POST" action="{% url 'send_messages' %}">
+            {% csrf_token %}
+            <input type="hidden" name="city" value="{{ selected_city }}">
+            <button type="submit">Send Messages</button>
+        </form>
+    {% endif %}
+
+</body>
+</html>
