@@ -1,4 +1,4 @@
-# IGMSG
+# IGBot
 
 This is an Instagram Message Sender app.
 
